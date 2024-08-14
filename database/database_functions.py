@@ -112,3 +112,17 @@ async def create_task(db_path: str, user_id: str, start_time: str, end_time: str
             await cursor.execute(query)
             await db.commit()
 
+async def delete_tasks(db_path: str, user_id: str) -> None:
+    """Удаляет все задачи пользователя по текущей дате."""
+
+    query = f"""
+    delete from schedule where user_id = {user_id} and date = {date}
+    """
+
+    async with aiosqlite.connect(db_path) as db:
+        async with db.cursor() as cursor:
+            await cursor.execute(query)
+            await db.commit()
+
+
+
