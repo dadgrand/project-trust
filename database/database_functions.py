@@ -60,3 +60,6 @@ async def edit_questionnaire(db_path: str, user_id: str, column_name: str, colum
             await cursor.execute(query)
             await db.commit()
 
+async def show_questionnaire(db_path: str, user_id: str) -> str:
+    """Выводит данные анкеты."""
+
