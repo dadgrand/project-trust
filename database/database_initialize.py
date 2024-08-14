@@ -17,6 +17,7 @@ async def create_table_users(db_path: str) -> None:
     async with aiosqlite.connect(db_path) as db:
         async with db.cursor() as cursor:
             await cursor.execute(query)
+            await db.commit()
 
 
 async def create_table_questionnaire(db_path: str) -> None:
@@ -80,6 +81,7 @@ async def create_table_questionnaire(db_path: str) -> None:
     async with aiosqlite.connect(db_path) as db:
         async with db.cursor() as cursor:
             await cursor.execute(query)
+            await db.commit()
 
 
 async def create_table_schedule(db_path: str) -> None:
@@ -99,6 +101,7 @@ async def create_table_schedule(db_path: str) -> None:
     async with aiosqlite.connect(db_path) as db:
         async with db.cursor() as cursor:
             await cursor.execute(query)
+            await db.commit()
 
 
 async def list_tables(db_path: str) -> None:
@@ -134,6 +137,7 @@ async def delete_table(db_path: str, table_name: str) -> None:
     async with aiosqlite.connect(db_path) as db:
         async with db.cursor() as cursor:
             await cursor.execute(query)
+            await db.commit()
 
 
 def main():
