@@ -1,7 +1,7 @@
 import aiosqlite
 import asyncio
 
-db_path = 'database/users.db'
+db_path = '/Users/pabgrand/Documents/туда сюда/project-trust/database/data.db'
 
 
 async def create_table_users(db_path: str) -> None:
@@ -15,8 +15,8 @@ async def create_table_users(db_path: str) -> None:
     """
 
     async with aiosqlite.connect(db_path) as db:
-        await db.execute(query)
-        await db.commit()
+        async with db.cursor() as cursor:
+            await cursor.execute(query)
 
 
 async def create_table_questionnaire(db_path: str) -> None:
@@ -73,14 +73,13 @@ async def create_table_questionnaire(db_path: str) -> None:
         live_sessions text, /* 45. Вы не против участвовать в прямых эфирах - разборах с наставником? (Рандомно выбирается кто-то из зрителей) Пожалуйста, будьте честны по поводу прожитых дней. */
         journaling text, /* 46. Вы хотите вести ежедневник? Поверьте, это чит код. */
         take_responsibility text, /* 47. Вы готовы брать ответственность за свою жизнь? */
-        desire_for_improvement text, /* 48. Вы точно хотите стать лучше? */
-        foreign key (user_id) references users(user_id) on delete cascade
+        desire_for_improvement text /* 48. Вы точно хотите стать лучше? */
     );
     """
 
     async with aiosqlite.connect(db_path) as db:
-        await db.execute(query)
-        await db.commit()
+        async with db.cursor() as cursor:
+            await cursor.execute(query)
 
 
 async def create_table_schedule(db_path: str) -> None:
@@ -93,18 +92,52 @@ async def create_table_schedule(db_path: str) -> None:
         date date not null,
         start_time time default null,
         end_time time default null,
-        is_tagged boolean default false,
-        foreign key (user_id) references users(user_id) on delete cascade
+        is_tagged boolean default false
     )
     """
 
     async with aiosqlite.connect(db_path) as db:
-        await db.execute(query)
-        await db.commit()
+        async with db.cursor() as cursor:
+            await cursor.execute(query)
+
+
+async def list_tables(db_path: str) -> None:
+    """Выводит список названий таблиц в базе данных."""
+
+    query = """
+    SELECT name FROM sqlite_master WHERE type='table';
+    """
+
+    try:
+        async with aiosqlite.connect(db_path) as db:
+            async with db.cursor() as cursor:
+                await cursor.execute(query)
+                tables = await cursor.fetchall()
+
+                if tables:
+                    print("Таблицы в базе данных:")
+                    for table in tables:
+                        print(table[0])  # Выводим только название таблицы
+                else:
+                    print("База данных пуста. Таблицы не найдены.")
+
+    except Exception as e:
+        print(f"Ошибка при получении списка таблиц: {e}")
+
+async def delete_table(db_path: str, table_name: str) -> None:
+    """Удаляет таблицу."""
+
+    query = f"""
+    drop table if exists "{table_name}"
+    """
+
+    async with aiosqlite.connect(db_path) as db:
+        async with db.cursor() as cursor:
+            await cursor.execute(query)
 
 
 def main():
-    asyncio.run(create_table_users(db_path))
+    asyncio.run(list_tables(db_path))
 
 
 if __name__ == '__main__':
