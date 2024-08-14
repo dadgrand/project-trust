@@ -142,7 +142,8 @@ async def delete_table(db_path: str, table_name: str) -> None:
 
 def main():
     asyncio.run(list_tables(db_path))
-
+    asyncio.run(delete_table(db_path, 'schedule'))
+    asyncio.run(create_table_schedule(db_path))
 
 if __name__ == '__main__':
     main()
