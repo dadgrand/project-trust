@@ -92,7 +92,7 @@ async def create_table_schedule(db_path: str) -> None:
         task_id integer primary key autoincrement,
         user_id text not null,
         task_name text not null,
-        date date not null,
+        day date not null,
         start_time time default null,
         end_time time default null,
         is_tagged boolean default false

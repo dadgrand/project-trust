@@ -2,6 +2,7 @@ import aiosqlite
 import asyncio
 
 from utils.questionnaire import questionnaire
+import datetime
 from datetime import date
 
 db_path = '/Users/pabgrand/Documents/туда сюда/project-trust/database/data.db'
@@ -104,7 +105,7 @@ async def create_task(db_path: str, user_id: str, start_time: str, end_time: str
     """Создаёт задачу в расписании пользователя."""
 
     query = f"""
-    insert into schedule (user_id, date, start_time, end_time) values ({user_id}, {date}, {start_time}, {end_time})
+    insert into schedule (user_id, day, start_time, end_time) values ({user_id}, {date}, {start_time}, {end_time})
     """
 
     async with aiosqlite.connect(db_path) as db:
@@ -116,7 +117,7 @@ async def delete_tasks(db_path: str, user_id: str) -> None:
     """Удаляет все задачи пользователя по текущей дате."""
 
     query = f"""
-    delete from schedule where user_id = {user_id} and date = {date}
+    delete from schedule where user_id = {user_id} and day = {date}
     """
 
     async with aiosqlite.connect(db_path) as db:
@@ -133,3 +134,19 @@ async def show_schedule(db_path: str, user_id: str) -> str:
        ...
     """
 
+    today = date.today()
+    query = f"""
+    select start_time, end_time, task_name from schedule where user_id = {user_id} and date(day) = {today} order by start_time
+    """
+
+    async with aiosqlite.connect(db_path) as db:
+        async with db.cursor() as cursor:
+            await cursor.execute(query)
+            tasks = await cursor.fetchall()
+
+            if tasks:
+                schedule_str = "\n".join([f"{task[0].time()}:{task[1].time()} – {task[2]}" for task in tasks])
+                return schedule_str
+            else:
+                print("На сегодня задач не запланировано. Желаете составить расписание?")
+                return "schedule_does_not_exists"
