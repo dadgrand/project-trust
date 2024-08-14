@@ -125,4 +125,11 @@ async def delete_tasks(db_path: str, user_id: str) -> None:
             await db.commit()
 
 
+async def show_schedule(db_path: str, user_id: str) -> str:
+    """Выводит все задачи пользователя по текущей дате в следующем формате:
+
+       start_time:end_time – task_name
+       start_time:end_time – task_name
+       ...
+    """
 

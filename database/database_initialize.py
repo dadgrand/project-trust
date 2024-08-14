@@ -91,6 +91,7 @@ async def create_table_schedule(db_path: str) -> None:
     create table if not exists schedule (
         task_id integer primary key autoincrement,
         user_id text not null,
+        task_name text not null,
         date date not null,
         start_time time default null,
         end_time time default null,
