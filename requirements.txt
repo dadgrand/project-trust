@@ -2,3 +2,4 @@ openai
 telethon
 aiosqlite
 asyncio
+python-env
